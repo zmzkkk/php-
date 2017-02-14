@@ -1,4 +1,4 @@
-
+<?php 
 function formatXml($contents,$get_attributes = 1, $priority = 'tag'){
     $parser = xml_parser_create('');
    xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, "UTF-8");
@@ -122,4 +122,31 @@ function formatXml($contents,$get_attributes = 1, $priority = 'tag'){
     }
     \SeasLog::log('debug',"请求上游接口：".json_encode($xml_array));
     return ($xml_array);    
+}
+
+
+/**
+ * 链接 redis
+ * @return [type] [description]
+ */
+function redisOpen($close = false){
+    static $__redis = null;
+    if($close){
+        if($__redis){
+            $__redis->close();
+            return ;
+        }
+    }
+    if(empty($__redis)){
+        // var_dump(config("database.redis"));
+        $redisConfig = config("database.redis");
+        // var_dump($redisConfig);
+        if($redisConfig){
+            $__redis = new \redis();
+            $__redis->open($redisConfig['host'],$redisConfig['port']);
+            // $__redis->auth('iwqh452785sd612hrifg8w346.nk');
+            $__redis->select(2);
+        }
+    }
+    return $__redis;
 }
