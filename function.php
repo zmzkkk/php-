@@ -150,3 +150,36 @@ function redisOpen($close = false){
     }
     return $__redis;
 }
+
+
+
+/**
+ * 友好的时间显示
+ *
+ * @param int    $sTime 待显示的时间
+ * @return string
+ */
+function friendlyDate($sTime) {
+    if (!$sTime)
+        return '';
+    //sTime=源时间，cTime=当前时间，dTime=时间差
+    $cTime      =   time();
+    if($sTime<$cTime){
+        return '已过期';
+    }
+    $dTime      =   $sTime - $cTime;
+    $dDay       =   intval(date("z",$sTime)) - intval(date("z",$cTime));
+    $dYear      =   intval(date("Y",$sTime)) - intval(date("Y",$cTime)) ;
+
+    if( $dTime < 60 ){
+        return intval(floor($dTime / 10) * 10)."秒后";
+    }elseif( $dTime < 3600 ){
+        return intval($dTime/60)."分钟后";
+    }elseif( $dYear==0 && $dDay == 0  ){//今天的数据.年份相同.日期相同.
+        return '今天'.date('H:i',$sTime);
+    }elseif($dYear==0){
+        return date("m月d日 H:i",$sTime);
+    }else{
+        return date("Y-m-d H:i",$sTime);
+    }
+}
